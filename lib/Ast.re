@@ -1,25 +1,53 @@
+open Expr;
+
 type ast =
   | Variable(string)
   | Application(ast, ast)
   | Abstraction(string, ast)
-  | Subs(string);
+  | Substitution(string);
 
-type expr =
+type ast_expr =
   | Ast(ast)
   | Let(string, ast);
 
-let rec show_ast =
-  fun
-  | Variable(str)
-  | Subs(str) => str
-  | Abstraction(name, ast) => "λ" ++ name ++ "." ++ show_ast(ast)
-  | Application(Abstraction(_, _) as ast1, ast2) =>
-    "( " ++ show_ast(ast1) ++ " ) " ++ show_ast(ast2)
-  | Application(ast1, Abstraction(_, _) as ast2) =>
-    show_ast(ast1) ++ " ( " ++ show_ast(ast2) ++ " )"
-  | Application(ast1, ast2) => show_ast(ast1) ++ " " ++ show_ast(ast2);
+let rec substitute = (name, ast, bindings) =>
+  switch (ast) {
+  | Application(func, arg) =>
+    let func' = substitute(name, func, bindings);
+    let arg' = substitute(name, arg, bindings);
+    App(func', arg');
+  | Abstraction(fun_name, body) =>
+    Lambda(fun_name, substitute(name, body, bindings))
+  | Substitution(sub_name) =>
+    if (sub_name == name) {
+      failwith("Cannot make let recursivity '" ++ name ++ "'");
+    } else {
+      try(substitute(sub_name, Hashtbl.find(bindings, sub_name), bindings)) {
+      | Not_found => failwith("Cannot find function " ++ sub_name)
+      };
+    }
+  | Variable(a) => Var(a)
+  };
 
-let show_expr =
-  fun
-  | Let(str, ast) => str ++ " = " ++ show_ast(ast)
-  | Ast(x) => show_ast(x);
+let ast_to_expr = list => {
+  let bindings = Hashtbl.create(0);
+  let rec loop = list_tail => {
+    switch (list_tail) {
+    | [Let(name, expr), ...tl] =>
+      Hashtbl.add(bindings, name, expr);
+      let loop_res = loop(tl);
+      name == "Main" ? Some(expr) : loop_res;
+    | [Ast(ast), ...tl] =>
+      switch (loop(tl)) {
+      | None => Some(ast)
+      | Some(_) as res => res
+      }
+    | [] => None
+    };
+  };
+  let main = loop(list);
+  switch (main) {
+  | None => failwith("Cannot find entrypoint")
+  | Some(entrypoint) => substitute("Main", entrypoint, bindings)
+  };
+};

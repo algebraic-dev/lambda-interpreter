@@ -1,1 +1,5 @@
-Main = λ a.  λ a. a b c
+let true  = λ x.λ y.x
+let false = λ x.λ y.y
+let if    = λ p.λ a.λ b.p a b
+
+let Main = if true true false

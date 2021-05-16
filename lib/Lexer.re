@@ -2,13 +2,12 @@ open Parser;
 open Sedlexing.Utf8;
 
 let subsName = [%sedlex.regexp?
-  Compl(' ' | '.' | '=' | '(' | ')' | '\n' | '\t' | '\r')
+  Compl(' ' | '.' | '=' | '(' | ')' | ';' | '\n' | '\t' | '\r')
 ];
 
 let rec lex = lexbuf => {
   switch%sedlex (lexbuf) {
-  | "\r"
-  | "\n"
+  | Plus("\r" | "\n") => lex(lexbuf)
   | "\t"
   | " " => lex(lexbuf)
   | "λ" => LAMBDA
@@ -16,6 +15,7 @@ let rec lex = lexbuf => {
   | ")" => RPAR
   | "=" => EQUAL
   | "." => DOT
+  | "let" => LET
   | ('a' .. 'z', Star('\'')) => VAR(lexeme(lexbuf))
   | Plus(subsName) => NAME(lexeme(lexbuf))
   | eof => EOF

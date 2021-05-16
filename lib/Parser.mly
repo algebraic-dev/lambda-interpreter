@@ -5,31 +5,28 @@
 %token EOF LAMBDA
 %token <string> NAME
 %token <string> VAR
-%token DOT EQUAL
-%token LPAR RPAR 
+%token DOT EQUAL LET
+%token LPAR RPAR
 
-%nonassoc LAMBDA LPAR
-%left EQUAL
+%nonassoc LAMBDA
 %right APPLICATION
-%left VAR
-%left NAME
+%left VAR  LPAR NAME
 %left LASSOC
 
-%start <expr list> main
+%start <ast_expr list> main
 
 %% 
 
 main: 
-    | ast EOF              { [Ast($1)] }
-    | letop+ EOF           {  $1  }
-    | EOF                  {  []  }
-
+    | letop+ EOF            { $1 }
+    | ast EOF               { [Ast($1)] }
+    | EOF                   {  []  }
 letop: 
-    | NAME EQUAL ast       { Let ($1, $3) }
-
+    | LET NAME EQUAL ast    { Let ($2, $4) }
 ast: 
-    | LPAR ast RPAR        { $2 }
-    | VAR                  { Variable $1 }
-    | NAME                 { Subs $1 }
-    | LAMBDA VAR DOT ast  %prec APPLICATION  { Abstraction ($2, $4) }
-    | ast ast %prec LASSOC { Application ($1, $2) }
+    | VAR                   { Variable $1 }
+    | NAME                  { Substitution $1 }
+    | LAMBDA VAR DOT ast  
+      %prec APPLICATION     { Abstraction ($2, $4) }
+    | ast ast %prec LASSOC  { Application ($1, $2) }
+    | LPAR ast RPAR         { $2 }
