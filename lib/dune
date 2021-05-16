@@ -1,2 +1,6 @@
 (library
- (name lib))
+ (name compiler)
+ (libraries sedlex menhirLib)
+ (preprocess (pps sedlex.ppx)))
+
+(menhir (modules Parser))

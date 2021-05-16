@@ -1,4 +1,4 @@
 (executable
- (name Nbt)
- (public_name Nbt)
- (libraries lib))
+ (name Lambda)
+ (public_name Lambda)
+ (libraries compiler))

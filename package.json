@@ -1,37 +1,36 @@
 {
-  "name": "nbt",
+  "name": "lambda",
   "version": "0.1.0",
-  "description": "Simple nbt reader and writer",
+  "description": "Simple lambda compiler",
   "license": "MIT",
   "esy": {
     "build": "dune build -p #{self.name}",
-    "buildDev": "refmterr dune build --promote-install-files --root . --only-package #{self.name}",
-    "release": {
-      "rewritePrefix": true,
-      "bin": [
-        "Nbt"
-      ]
-    },
-    "buildEnv": {
-      "ODOC_SYNTAX": "re"
-    }
+    "buildDev":
+      "refmterr dune build --promote-install-files --root . --only-package #{self.name}",
+    "release": { "rewritePrefix": true, "bin": [ "Lambda" ] },
+    "buildEnv": { "ODOC_SYNTAX": "re" }
   },
   "scripts": {
-    "test": "esy x Nbt",
+    "test": "esy x Lambda",
     "format": "esy dune build @fmt --auto-promote",
     "doc": "esy dune build @doc"
   },
   "dependencies": {
+    "@esy-ocaml/reason": ">= 3.6.0 < 4.0.0",
     "@opam/dune": ">=2.6",
+    "@opam/menhir": "20210419",
+    "@opam/menhirLib": "20210419",
+    "@opam/ounit2": "2.2.4",
+    "@opam/sedlex": "2.3",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
-    "@esy-ocaml/reason": ">= 3.6.0 < 4.0.0",
     "ocaml": "~4.10.0"
   },
   "devDependencies": {
-    "@opam/merlin": "*",
+    "@opam/merlin": "3.5.0",
+    "@opam/ocaml-lsp-server": "1.4.1",
+    "@opam/odoc": "*",
     "@reason-native/rely": "*",
-    "refmterr": "*",
-    "@opam/odoc": "*"
+    "refmterr": "*"
   }
 }
