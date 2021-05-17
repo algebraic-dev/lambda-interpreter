@@ -23,3 +23,19 @@ let rec free_variables =
   | App(func, arg) =>
     List.append(free_variables(func), free_variables(arg))
   | Lambda(name, expr) => List.filter((!=)(name), free_variables(expr));
+
+let rec rem_duplicated = (a, b) => {
+  switch (a) {
+  | [element, ...tail] =>
+    let res = List.exists((==)(element), b) ? b : [element, ...b];
+    rem_duplicated(tail, res);
+  | [] => b
+  };
+};
+
+let rec get_variables =
+  fun
+  | Var(x) => [x]
+  | App(func, arg) =>
+    rem_duplicated(get_variables(func), get_variables(arg))
+  | Lambda(name, expr) => rem_duplicated([name], get_variables(expr));
