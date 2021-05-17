@@ -39,3 +39,12 @@ let rec get_variables =
   | App(func, arg) =>
     rem_duplicated(get_variables(func), get_variables(arg))
   | Lambda(name, expr) => rem_duplicated([name], get_variables(expr));
+
+let rec equal = (a, b) =>
+  switch (a, b) {
+  | (Var(_), Var(_)) => true
+  | (App(func, arg), App(func', arg')) =>
+    equal(func, func') && equal(arg, arg')
+  | (Lambda(_, expr), Lambda(_, expr')) => equal(expr, expr')
+  | _ => false
+  };

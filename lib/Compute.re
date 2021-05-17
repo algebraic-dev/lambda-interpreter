@@ -21,34 +21,31 @@ let barengdt = ast => {
       App(fixed_func, fixed_arg);
     | Lambda(name, arg) =>
       let new_name = get_new_name(name, fv);
+      let fv = new_name == name ? [name, ...fv] : fv;
       Lambda(new_name, loop(fv, arg));
     };
   };
   loop([], ast);
 };
 
-let rec beta_substitution = (body, name, subs) => {
+let rec substitute = (body, name, subs) => {
   switch (body) {
   | Var(var_name) when name == var_name => subs
   | Var(name) => Var(name)
   | App(func, arg) =>
-    App(
-      beta_substitution(func, name, subs),
-      beta_substitution(arg, name, subs),
-    )
+    App(substitute(func, name, subs), substitute(arg, name, subs))
   | Lambda(func_name, body) when func_name == name => Lambda(func_name, body)
   | Lambda(func_name, body) =>
-    Lambda(func_name, beta_substitution(body, name, subs))
+    Lambda(func_name, substitute(body, name, subs))
   };
 };
 
-let rec compute = expr => {
+let rec beta_reduction = expr => {
   switch (expr) {
-  | Lambda(name, body_expr) => Lambda(name, compute(body_expr))
+  | Lambda(name, body_expr) => Lambda(name, beta_reduction(body_expr))
   | App(Lambda(name, expr), arg) =>
-    beta_substitution(compute(expr), name, compute(arg))
-
-  | App(func, arg) => App(compute(func), compute(arg))
+    substitute(beta_reduction(expr), name, beta_reduction(arg))
+  | App(func, arg) => App(beta_reduction(func), beta_reduction(arg))
   | other => other
   };
 };
