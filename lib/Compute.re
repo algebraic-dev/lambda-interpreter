@@ -44,10 +44,11 @@ let rec beta_substitution = (body, name, subs) => {
 
 let rec compute = expr => {
   switch (expr) {
-  | Lambda(name, expr) => Lambda(name, compute(expr))
-  | App(App(_, _) as func, arg) => compute(App(compute(func), arg))
+  | Lambda(name, body_expr) => Lambda(name, compute(body_expr))
   | App(Lambda(name, expr), arg) =>
     beta_substitution(compute(expr), name, compute(arg))
+
+  | App(func, arg) => App(compute(func), compute(arg))
   | other => other
   };
 };

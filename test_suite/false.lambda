@@ -1,5 +1,5 @@
 let true  = λ x.λ y.x
 let false = λ x.λ y.y
-let if    = λ p.λ a.λ b. p a b
+let if    = λ p.λ a. λ b. p a b
 
-let Main = if 
+let Main = if false false true
