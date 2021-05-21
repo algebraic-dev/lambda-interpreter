@@ -5,18 +5,17 @@ type expr =
   | App(expr, expr)
   | Lambda(string, expr);
 
-let rec show_expr = ctx =>
+let rec show_expr =
   fun
   | Var(x) => x
   | App(Lambda(_) as func, Lambda(_) as arg) =>
-    sprintf("(%s) (%s)", show_expr(ctx, func), show_expr(ctx, arg))
+    sprintf("(%s) (%s)", show_expr(func), show_expr(arg))
   | App(Lambda(_) as func, arg) =>
-    sprintf("(%s) %s", show_expr(ctx, func), show_expr(ctx, arg))
+    sprintf("(%s) %s", show_expr(func), show_expr(arg))
   | App(func, Lambda(_) as arg) =>
-    sprintf("%s (%s)", show_expr(ctx, func), show_expr(ctx, arg))
-  | App(func, arg) =>
-    sprintf("%s %s", show_expr(ctx, func), show_expr(ctx, arg))
-  | Lambda(name, expr) => sprintf("λ%s. %s", name, show_expr(ctx, expr));
+    sprintf("%s (%s)", show_expr(func), show_expr(arg))
+  | App(func, arg) => sprintf("%s %s", show_expr(func), show_expr(arg))
+  | Lambda(name, expr) => sprintf("λ%s. %s", name, show_expr(expr));
 
 let rec free_variables =
   fun
