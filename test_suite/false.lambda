@@ -2,4 +2,4 @@ let true  = λ x.λ y.x
 let false = λ x.λ y.y
 let if    = λ p.λ a. λ b. p a b
 
-let Main = true (λ x. λ x'. z y x)
+let Main = true true true

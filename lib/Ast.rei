@@ -10,4 +10,4 @@ type ast_expr =
   | Ast(ast)
   | Let(string, ast);
 
-let ast_to_expr: list(ast_expr) => expr;
+let ast_to_expr: list(ast_expr) => (Hashtbl.t(string, ast), expr);

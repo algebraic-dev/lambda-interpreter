@@ -48,6 +48,6 @@ let ast_to_expr = list => {
   let main = loop(list);
   switch (main) {
   | None => failwith("Cannot find entrypoint")
-  | Some(entrypoint) => substitute("Main", entrypoint, bindings)
+  | Some(entrypoint) => (bindings, substitute("Main", entrypoint, bindings))
   };
 };
