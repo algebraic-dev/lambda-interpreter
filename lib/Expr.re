@@ -10,11 +10,12 @@ let rec show_expr =
   | Var(x) => x
   | App(Lambda(_) as func, Lambda(_) as arg) =>
     sprintf("(%s) (%s)", show_expr(func), show_expr(arg))
+  | App(Var(x), Var(y)) => sprintf("(%s %s)", x, y)
   | App(Lambda(_) as func, arg) =>
     sprintf("(%s) %s", show_expr(func), show_expr(arg))
   | App(func, Lambda(_) as arg) =>
     sprintf("%s (%s)", show_expr(func), show_expr(arg))
-  | App(func, arg) => sprintf("%s %s", show_expr(func), show_expr(arg))
+  | App(func, arg) => sprintf("(%s %s)", show_expr(func), show_expr(arg))
   | Lambda(name, expr) => sprintf("λ%s. %s", name, show_expr(expr));
 
 let rec free_variables =

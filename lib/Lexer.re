@@ -16,7 +16,7 @@ let rec lex = lexbuf => {
   | "=" => EQUAL
   | "." => DOT
   | "let" => LET
-  | 'a' .. 'z' => VAR(lexeme(lexbuf))
+  | ('a' .. 'z', Star('0' .. '9')) => VAR(lexeme(lexbuf))
   | Plus(subsName) => NAME(lexeme(lexbuf))
   | eof => EOF
   | any => failwith("Unexpected char '" ++ lexeme(lexbuf) ++ "\'")

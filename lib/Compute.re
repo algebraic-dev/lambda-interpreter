@@ -17,7 +17,7 @@ let get_new_name = (name, list) => {
   loop(name, list);
 };
 
-let alpha_convertion = (from, new_name, ast) => {
+let alpha_convert = (from, new_name, ast) => {
   let rec loop = ast => {
     switch (ast) {
     | Var(name) when name == from => Var(new_name)
@@ -33,27 +33,34 @@ let alpha_convertion = (from, new_name, ast) => {
   loop(ast);
 };
 
-let rec barengdt = ast => {
-  switch (ast) {
-  | App(func, arg) =>
-    let func = barengdt(func);
-    let f1 = get_variables(func);
-    let f2 = get_variables(arg);
-    let res =
-      List.fold_left(
-        (acc, b) =>
-          if (List.exists((==)(b), f1)) {
-            alpha_convertion(b, get_new_name(b, f1), acc);
-          } else {
-            acc;
-          },
-        arg,
-        f2,
-      );
-    App(func, res);
-  | Lambda(var_name, body) => Lambda(var_name, barengdt(body))
-  | _ => ast
+let print_stack = (prefix, ls) => {
+  Printf.printf("%s: %s\n", prefix, String.concat(",", ls));
+};
+
+let barengdt = ast => {
+  let rec loop = (ast, names) => {
+    switch (ast) {
+    | App(func, arg) =>
+      let (func, names) = loop(func, names);
+      let (arg, names) = loop(arg, names);
+      (App(func, arg), names);
+    | Lambda(var_name, body) =>
+      switch (List.exists((==)(var_name), names)) {
+      | true =>
+        let new_name = get_new_name(var_name, names);
+        let new_names = [new_name, ...names];
+        let converted = alpha_convert(var_name, new_name, body);
+        let (body, names) = loop(converted, new_names);
+        (Lambda(new_name, body), names);
+      | _ =>
+        let new_names = [var_name, ...names];
+        let (body, names) = loop(body, new_names);
+        (Lambda(var_name, body), names);
+      }
+    | _ => (ast, names)
+    };
   };
+  fst @@ loop(ast, []);
 };
 
 let rec substitute = (body, name, subs) => {
@@ -75,5 +82,13 @@ let rec beta_reduction = expr => {
     substitute(beta_reduction(expr), name, beta_reduction(arg))
   | App(func, arg) => App(beta_reduction(func), beta_reduction(arg))
   | other => other
+  };
+};
+
+let rec compute = last => {
+  let computed = beta_reduction(last);
+  switch (Expr.equal(last, computed)) {
+  | true => computed
+  | _ => compute(computed)
   };
 };
