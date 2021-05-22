@@ -18,8 +18,6 @@ let 5     = succ 4
 let 6     = succ 5
 let 7     = succ 6
 let 8     = succ 7
+let 9     = succ 8
 
-let Main = 
-  if (- (+ 4 4) 7) 
-    true 
-    false
+let Main = (- (+ 4 3) (- 9 2))
