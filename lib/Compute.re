@@ -33,10 +33,6 @@ let alpha_convert = (from, new_name, ast) => {
   loop(ast);
 };
 
-let print_stack = (prefix, ls) => {
-  Printf.printf("%s: %s\n", prefix, String.concat(",", ls));
-};
-
 let barengdt = ast => {
   let rec loop = (ast, names) => {
     switch (ast) {
