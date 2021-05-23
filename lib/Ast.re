@@ -46,8 +46,18 @@ let ast_to_expr = list => {
     };
   };
   let main = loop(list);
+  let computed = ref([]);
+  Hashtbl.iter(
+    (key, value) => {
+      computed := [(key, substitute(key, value, bindings)), ...computed^]
+    },
+    bindings,
+  );
   switch (main) {
   | None => failwith("Cannot find entrypoint")
-  | Some(entrypoint) => substitute("Main", entrypoint, bindings)
+  | Some(entrypoint) => (
+      computed^,
+      substitute("Main", entrypoint, bindings),
+    )
   };
 };

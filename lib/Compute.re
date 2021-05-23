@@ -81,9 +81,10 @@ let rec beta_reduction = expr => {
   };
 };
 
+// This is equivalent of a zero-or-more-steps computation
 let rec compute = last => {
   let computed = beta_reduction(last);
-  switch (Expr.equal(last, computed)) {
+  switch (is_alpha_equivalent(last, computed)) {
   | true => computed
   | _ => compute(computed)
   };
