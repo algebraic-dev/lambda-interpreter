@@ -1,0 +1,5 @@
+let K = λ x. λ y. x
+let S = λ x. λ y. λ z. x z (y z)
+let I = λ x. x 
+
+let Main = S K I I

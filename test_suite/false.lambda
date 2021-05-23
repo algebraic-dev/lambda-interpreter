@@ -1,15 +1,15 @@
-let true  = λ x.λ y.x
-let false = λ x.λ y.y
-let if    = λ p.λ a. λ b. p a b
-let succ  = λ n.λ f.λ x.f (n f x)
+let true  = λ x. λ y. x
+let false = λ x. λ y. y
+let if    = λ p. λ a. λ b. p a b
+let succ  = λ n. λ f. λ x. f (n f x)
 let +     = λ m. λ n. m succ n
 let *     = λ m. λ n. m (+ n) 0
-let id    =  λ x. x
+let id    = λ x. x
 
 let pred  = λ n. λ f. λ x. n (λ g. λ h. h (g f)) (λ u. x) (λ u.u)
 let -     = λ m. λ n. n pred m
 
-let 0     = λ f. λ x. x
+let 0     = false
 let 1     = succ 0
 let 2     = succ 1
 let 3     = succ 2
@@ -19,5 +19,6 @@ let 6     = succ 5
 let 7     = succ 6
 let 8     = succ 7
 let 9     = succ 8
+let 10    = succ 9
 
-let Main = (- (+ 4 3) (- 9 2))
+let Main = (* 2 4)
